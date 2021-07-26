@@ -14,6 +14,8 @@ def prepare():
     parser.add_argument('configs', nargs='+')
     parser.add_argument('--devices', default=None)
     parser.add_argument('--evaluate', default=False, action='store_true')
+    parser.add_argument('--rosinference', default=False, action='store_true')
+
     args, opts = parser.parse_known_args()
     if args.devices is not None and args.devices != 'cpu':
         gpus = set_cuda_visible_devices(args.devices)
@@ -33,12 +35,20 @@ def prepare():
     else:
         configs.device = 'cuda'
         configs.device_ids = gpus
+
     if args.evaluate and configs.evaluate.fn is not None:
         if 'dataset' in configs.evaluate:
             for k, v in configs.evaluate.dataset.items():
+                print(v)
                 configs.dataset[k] = v
     else:
         configs.evaluate = None
+
+    # ROS inference
+    if args.rosinference and configs.rosinference.fn is not None:
+        print('ROS INFERENCE MODE')
+    else:
+        configs.rosinference = None
 
     if configs.evaluate is None:
         metrics = []
@@ -72,6 +82,13 @@ def prepare():
         configs.evaluate.predictions_path = configs.evaluate.best_checkpoint_path.replace('.pth.tar', '.predictions')
         configs.evaluate.stats_path = configs.evaluate.best_checkpoint_path.replace('.pth.tar', '.eval.npy')
 
+    if args.rosinference and configs.rosinference is not None: #ROS
+        if 'best_checkpoint_path' not in configs.rosinference or configs.rosinference.best_checkpoint_path is None:
+            if 'best_checkpoint_path' in configs.train and configs.train.best_checkpoint_path is not None:
+                configs.rosinference.best_checkpoint_path = configs.train.best_checkpoint_path
+            else:
+                configs.rosinference.best_checkpoint_path = os.path.join(configs.train.save_path, 'best.pth.tar')
+        assert configs.rosinference.best_checkpoint_path.endswith('.pth.tar')
     return configs
 
 
@@ -80,7 +97,11 @@ def main():
     if configs.evaluate is not None:
         configs.evaluate.fn(configs)
         return
-
+    
+    if configs.rosinference is not None:
+        configs.rosinference.fn(configs)
+        return
+    
     import numpy as np
     import tensorboardX
     import torch

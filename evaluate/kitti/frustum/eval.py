@@ -126,7 +126,8 @@ def evaluate(configs=None):
         if configs.evaluate.num_tests > 1:
             configs.evaluate.stats_path = stats_path.format(test_index)
             configs.evaluate.predictions_path = predictions_path.format(test_index)
-
+        
+        # print("configs.evaluate.stats_path: " , configs.evaluate.stats_path) # output: runs/kitti.frustum.pvcnne/best.eval.npy
         if os.path.exists(configs.evaluate.stats_path):
             print(f'==> hit {configs.evaluate.stats_path}')
             predictions = np.load(configs.evaluate.stats_path)
@@ -155,6 +156,7 @@ def evaluate(configs=None):
             worker_init_fn=lambda worker_id: np.random.seed(seed + worker_id)
         )
 
+
         ##############
         # Evaluation #
         ##############
@@ -167,8 +169,24 @@ def evaluate(configs=None):
 
         with torch.no_grad():
             for inputs, targets in tqdm(loader, desc='eval', ncols=0):
+                print(inputs.keys())
+                print(targets.keys())
+                # print("0: ", inputs['features'].shape)
+                print("0: ", inputs['one_hot_vectors'])
+
+
+                # print("1: ", inputs['features'][0].shape)
+                # print("2: ", inputs['features'][0][:][0])
+                # print("3: ", inputs['features'][2].shape)
+                # print("length: ", len(inputs.items()))
+                # print(inputs.items())
                 for k, v in inputs.items():
+                    # print(len(k), len(v))
                     inputs[k] = v.to(configs.device, non_blocking=True)
+                    # print(inputs[k].shape)
+
+                # print(len(inputs))
+                print(inputs['features'].shape)
                 outputs = model(inputs)
 
                 center = outputs['center']  # (B, 3)

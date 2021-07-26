@@ -1,0 +1,63 @@
+==> loading configs from ['configs/s3dis/pvcnn/area5/c1.py']
+[seed] = 1588147245
+[deterministic] = False
+[data]
+  [num_workers] = 16
+  [num_classes] = 13
+[dataset]
+  [func] = <class 'datasets.s3dis.S3DIS'>
+  [root] = data/s3dis/pointcnn
+  [with_normalized_coords] = True
+  [num_points] = 4096
+  [holdout_area] = 5
+[evaluate] = None
+[train]
+  [num_epochs] = 50
+  [batch_size] = 32
+  [meters]
+    [acc/iou_{}]
+      [func] = <class 'meters.s3dis.MeterS3DIS'>
+      [metric] = iou
+      [num_classes] = 13
+    [acc/acc_{}]
+      [func] = <class 'meters.s3dis.MeterS3DIS'>
+      [metric] = overall
+      [num_classes] = 13
+  [metric] = acc/iou_test
+  [criterion]
+    [func] = <class 'torch.nn.modules.loss.CrossEntropyLoss'>
+  [optimizer]
+    [func] = <class 'torch.optim.adam.Adam'>
+    [lr] = 0.001
+    [weight_decay] = 1e-05
+  [scheduler]
+    [func] = <class 'torch.optim.lr_scheduler.CosineAnnealingLR'>
+    [T_max] = 50
+  [save_path] = runs/s3dis.pvcnn.area5.c1
+  [metrics] = ['acc/iou_test']
+  [checkpoint_path] = runs/s3dis.pvcnn.area5.c1/latest.pth.tar
+  [checkpoints_path] = runs/s3dis.pvcnn.area5.c1/latest/e{}.pth.tar
+  [best_checkpoint_path] = runs/s3dis.pvcnn.area5.c1/best.pth.tar
+  [best_checkpoint_paths] = {'acc/iou_test': 'runs/s3dis.pvcnn.area5.c1/best/best.acc.iou_test.pth.tar'}
+[model]
+  [func] = <class 'models.s3dis.pvcnn.PVCNN'>
+  [num_classes] = 13
+  [extra_feature_channels] = 6
+[device] = cuda
+[device_ids] = [0]
+
+==> loading dataset "[func] = <class 'datasets.s3dis.S3DIS'>
+[root] = data/s3dis/pointcnn
+[with_normalized_coords] = True
+[num_points] = 4096
+[holdout_area] = 5"
+
+==> creating model "[func] = <class 'models.s3dis.pvcnn.PVCNN'>
+[num_classes] = 13
+[extra_feature_channels] = 6"
+==> creating scheduler "[func] = <class 'torch.optim.lr_scheduler.CosineAnnealingLR'>
+[T_max] = 50
+[last_epoch] = -1"
+
+==> training epoch 0/50
+train:  54% 969/1787 [08:08<06:56,  1.96it/s]

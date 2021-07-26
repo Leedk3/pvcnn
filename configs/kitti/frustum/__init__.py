@@ -7,6 +7,7 @@ from datasets.kitti.attributes import kitti_attributes as kitti
 from meters.kitti import MeterFrustumKitti
 from modules.frustum import FrustumPointNetLoss
 from evaluate.kitti.frustum.eval import evaluate
+from evaluate.kitti.frustum.rosinference import rosinference
 from utils.config import Config, configs
 
 # data configs
@@ -42,6 +43,12 @@ configs.dataset.from_rgb_detection = False
 configs.evaluate.fn = evaluate
 configs.evaluate.batch_size = 32
 configs.evaluate.dataset = Config(split='val', from_rgb_detection=True)
+
+# evaluate configs
+configs.rosinference.fn = rosinference
+configs.rosinference.batch_size = 32
+configs.rosinference.dataset = Config(split='val', from_rgb_detection=False)
+
 
 # train configs
 configs.train = Config()
