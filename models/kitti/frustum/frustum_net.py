@@ -39,11 +39,17 @@ class FrustumNet(nn.Module):
         assert one_hot_vectors.dim() == 2
 
         # foreground/background segmentation
+        # print("features size: ", features.shape) # features size:  torch.Size([32, 4, 1024])
         mask_logits = self.inst_seg_net({'features': features, 'one_hot_vectors': one_hot_vectors})
+        # print("mast_logits : ", mask_logits.shape) # mast_logits :  torch.Size([32, 2, 1024])
+
         # mask out Background points
         foreground_coords, foreground_coords_mean, _ = F.logits_mask(
             coords=features[:, :3, :], logits=mask_logits, num_points_per_object=self.num_points_per_object
         )
+        # print("foreground_coords : ", foreground_coords.shape) # foreground_coords :  torch.Size([32, 3, 512])
+        # print("foreground_coords_mean : ", foreground_coords_mean.shape) # foreground_coords_mean :  torch.Size([32, 3])
+        
         # center regression
         delta_coords = self.center_reg_net({'coords': foreground_coords, 'one_hot_vectors': one_hot_vectors})
         foreground_coords = foreground_coords - delta_coords.unsqueeze(-1)
@@ -92,7 +98,7 @@ class FrustumPVCNNE(FrustumNet):
     def __init__(self, num_classes, num_heading_angle_bins, num_size_templates, num_points_per_object,
                  size_templates, extra_feature_channels=1, width_multiplier=1, voxel_resolution_multiplier=1):
         instance_segmentation_net = functools.partial(InstanceSegmentationPVCNN,
-                                                      voxel_resolution_multiplier=voxel_resolution_multiplier)
+                                                      voxel_resolution_multiplier=voxel_resolution_multiplier) # PVCNN 
         super().__init__(num_classes=num_classes, instance_segmentation_net=instance_segmentation_net,
                          box_estimation_net=BoxEstimationPointNet, num_heading_angle_bins=num_heading_angle_bins,
                          num_size_templates=num_size_templates, num_points_per_object=num_points_per_object,

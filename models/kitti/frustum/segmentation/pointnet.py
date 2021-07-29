@@ -37,14 +37,31 @@ class InstanceSegmentationNet(nn.Module):
         one_hot_vectors = inputs['one_hot_vectors'].unsqueeze(-1).repeat([1, 1, num_points])
         assert one_hot_vectors.dim() == 3  # [B, C, N]
 
+        ''' 
+        if the number of Shared MLP layer is more than two, except the first one, all the value is identically returned.
+        (example)
+        print("feature: ", features[:, :3, :].shape)
+        print("point_coords: ", point_coords.shape)
+        point_coords == features[:, :3, :]
+        '''
         point_features, point_coords = self.point_features((features, features[:, :3, :]))
         cloud_features, _ = self.cloud_features((point_features, point_coords))
         cloud_features = cloud_features.max(dim=-1, keepdim=True).values.repeat([1, 1, num_points])
         return self.classifier(torch.cat([one_hot_vectors, point_features, cloud_features], dim=1))
-
+                
+        # print("point_features: ", point_features.shape)
+        # print("cloud_features: ", cloud_features.shape)
+        # print("one_hot_vectors: ", one_hot_vectors.shape)
+        # print("merge", torch.cat([one_hot_vectors, point_features, cloud_features], dim=1).shape)
+        ''' ---------PRINT OUTPUT ------------
+        point_features:  torch.Size([32, 1024, 1024])
+        cloud_features:  torch.Size([32, 1024, 1024])
+        one_hot_vectors:  torch.Size([32, 3, 1024])
+        merge torch.Size([32, 2051, 1024])
+        '''
 
 class InstanceSegmentationPointNet(InstanceSegmentationNet):
-    point_blocks = ((64, 3, None),)
+    point_blocks = ((64, 3, None),) #out_channels, num_blocks, voxel_resolution
     cloud_blocks = ((128, 1, None), (1024, 1, None))
 
     def __init__(self, num_classes=3, extra_feature_channels=1, width_multiplier=1):

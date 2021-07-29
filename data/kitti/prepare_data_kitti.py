@@ -65,6 +65,8 @@ def prepare_label(data_dir, output_dir):
 
     #     xyz_room = np.zeros((1, 6))
         label_room = np.zeros((1, 1))
+
+        
     #     # make store directories
     #     if not os.path.exists(path_prepare_label):
     #         os.makedirs(path_prepare_label)
@@ -98,7 +100,7 @@ def prepare_label(data_dir, output_dir):
 
 
 def main():
-    default_data_dir = '/home/usrg/Dataset/SFA3D/kitti'
+    default_data_dir = '/home/usrg/Dataset/LidarDetection/kitti'
     default_output_dir = 'data/s3dis/pointcnn'
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data', dest='data_dir', default=default_data_dir,

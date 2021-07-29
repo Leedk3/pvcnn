@@ -169,10 +169,10 @@ def evaluate(configs=None):
 
         with torch.no_grad():
             for inputs, targets in tqdm(loader, desc='eval', ncols=0):
-                print(inputs.keys())
-                print(targets.keys())
+                # print(inputs.keys())
+                # print(targets.keys())
                 # print("0: ", inputs['features'].shape)
-                print("0: ", inputs['one_hot_vectors'])
+                # print("0: ", inputs['one_hot_vectors'])
 
 
                 # print("1: ", inputs['features'][0].shape)
@@ -186,7 +186,7 @@ def evaluate(configs=None):
                     # print(inputs[k].shape)
 
                 # print(len(inputs))
-                print(inputs['features'].shape)
+                # print(inputs['features'].shape)
                 outputs = model(inputs)
 
                 center = outputs['center']  # (B, 3)
