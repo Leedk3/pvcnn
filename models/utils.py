@@ -56,7 +56,7 @@ def create_pointnet_components(blocks, in_channels, with_se=False, normalize=Tru
             block = SharedMLP #(in_channels, out_channels, dim=1)
         else:
             block = functools.partial(PVConv, kernel_size=3, resolution=int(vr * voxel_resolution),
-                                      with_se=with_se, normalize=normalize, eps=eps)
+                                      with_se=with_se, normalize=normalize, eps=eps) # PVCNN : voxel_resolution 
         for _ in range(num_blocks): # the number of blocks : e.g., 3 
             layers.append(block(in_channels, out_channels))
             in_channels = out_channels

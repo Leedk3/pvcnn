@@ -91,12 +91,20 @@ class datasetVis(object):
             # xyzi_arr = np.fromfile(pc_path, dtype=np.float32).reshape(-1, 4) #kitti
             xyzi_arr = np.load(pc_path).reshape(-1, 4) #niro
             xyzi_arr = np.array(xyzi_arr[:, :3])
-            
+
+
+
             # ori_pc = pcl.PointCloud(xyzi_arr)
             header = Header()
             header.stamp = rospy.Time.now()
             header.frame_id = 'velodyne'
 
+            # fields = [PointField('x', 0, PointField.FLOAT32, 1),
+            #         PointField('y', 4, PointField.FLOAT32, 1),
+            #         PointField('z', 8, PointField.FLOAT32, 1),        
+            #         PointField('intensity', 12, PointField.FLOAT32, 1)]  
+
+            # ros_msg = pc2.create_cloud(header, fields, xyzi_arr)
             
             ros_msg = pc2.create_cloud_xyz32(header, xyzi_arr)
 
